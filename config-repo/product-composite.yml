@@ -1,0 +1,59 @@
+server.port: 7000
+server.error.include-message: always
+spring.application.name: product-composite
+
+spring.cloud.stream.bindings.productSenderChannel.destination: productChannel
+spring.cloud.stream.bindings.recommendationSenderChannel.destination: recommendationChannel
+spring.cloud.stream.bindings.reviewSenderChannel.destination: reviewChannel
+
+app:
+  product-service:
+    host: product
+  recommendation-service:
+    host: recommendation
+  review-service:
+    host: review
+
+#circuit breaker
+resilience4j.circuitbreaker:
+  instances:
+    product:
+      registerHealthIndicator: true
+      ringBufferSizeInClosedState: 10
+      failureRateThreshold: 50
+      waitInterval: 10000
+      ringBufferSizeInHalfOpenState: 3
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+      ignoreExceptions:
+        - org.springframework.web.client.HttpClientErrorException
+
+#aixo potser ho hem de comentar perque no funciona
+resilience4j.retry:
+  instances:
+    product:
+      maxRetryAttempts: 3
+      waitDuration: 1000
+      retryExceptions:
+        - org.springframework.web.client.HttpClientErrorException
+
+management.endpoints.web.exposure.include: "*"
+management.health.circuitbreakers.enabled: true
+management.endpoint.health.show-details: "ALWAYS"
+
+---
+spring.config.activate.on-profile: docker
+
+server.port: 8080
+
+app:
+  product-service:
+    host: my-product-service
+    port: 8080
+
+  recommendation-service:
+    host: my-recommendation-service
+    port: 8080
+
+  review-service:
+    host: my-review-service
+    port: 8080

@@ -1,0 +1,17 @@
+server.port: 7003
+
+spring.cloud.stream.bindings.reviewReceiverChannel.destination: reviewChannel
+spring.cloud.stream.bindings.reviewReceiverChannel.group: review
+
+spring.application.name: review
+
+---
+spring.config.activate.on-profile: docker
+
+spring:
+  datasource:
+    url: jdbc:mysql://docker-mysql:3306/product
+    username: root
+    password: root
+
+server.port: 8080

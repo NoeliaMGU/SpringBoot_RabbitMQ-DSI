@@ -1,0 +1,39 @@
+app.eureka-server: localhost
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${app.eureka-server}:8761/eureka/
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    registryFetchIntervalSeconds: 5
+  instance:
+    leaseRenewalIntervalInSeconds: 5
+    leaseExpirationDurationInSeconds: 5
+
+ribbon.ServerListRefreshInterval: 5000
+ribbon.NFLoadBalancerPingInterval: 5
+
+spring.rabbitmq:
+  host: localhost
+  port: 5672
+  username: guest
+  password: guest
+
+
+management.endpoints.web.exposure.include: "*"
+
+#aixo es perque el gateway no agafa be el localhost i posa el nom
+#del portatil. Aixo es per corregir-ho i ha de ser a tots els microserveis
+#subscrits a discovery
+spring.cloud.discovery.enabled: true
+eureka.instance.hostname: localhost
+
+#centralized logs
+spring.zipkin.sender.type: rabbit
+spring.sleuth.sampler.probability: 1.0
+
+---
+spring.config.activate.on-profile: docker
+
+app.eureka-server: eureka
+spring.rabbitmq.host: rabbitmq
